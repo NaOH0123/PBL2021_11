@@ -1,7 +1,9 @@
-# PBL2021_11
+#PBL2021_11
 
-import time
-import picamera
+from picamera import PiCamera
+from time import sleep
+
+camera=PiCamera()
 
 t = time.time()
 print('start')
