@@ -1,23 +1,29 @@
 #PBL2021_11
 
-from picamera import PiCamera
-from time import sleep
-import time
+import picamera
+import picamera.array
+import cv2 as cv
 
-camera=PiCamera()
+with picamera.PiCamera() as camera:
+    with picamera.array.PiRGBArray(camera) as stream:
+        camera.resolution = (512, 384)
+        while True:
+            camera.capture(stream, 'bgr', use_video_port=True)
+            grayimg = cv.cvtColor(stream.array, cv.COLOR_BGR2GRAY)
+            
+            face_cascade = cv.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
+            facerect = face_cascade.detectMultiScale(grayimg, scaleFactor=1.2, minNeighbors=2, minSize=(100, 100))
+            
+            if len(facerect) > 0:
+                
+                cv.imwrite('my_pic2.jpg', stream.array)
+                break
 
-t = time.time()
-print('start')
-while True:
-    c = time.time()
-    if c - t >= 10:
-        print('camera start')
-        camera.start_preview()
-        print('camera start OK')
-        sleep(5)
-        camera.capture('/home/pi/Desktop/image.jpg')
-        print('camera Stop')
-        camera.stop_preview()
-        print('camera Stop OK')
-        break
-print('end')
+            cv.imshow('camera', stream.array)
+            stream.seek(0)
+            stream.truncate()
+            
+            if cv.waitKey(1) > 0:
+                break
+        cv.destroyAllWindows()
+    
