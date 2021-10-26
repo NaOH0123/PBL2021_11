@@ -10,7 +10,6 @@ with picamera.PiCamera() as camera:
         while True:
             camera.capture(stream, 'bgr', use_video_port=True)
             grayimg = cv.cvtColor(stream.array, cv.COLOR_BGR2GRAY)
-            
             face_cascade = cv.CascadeClassifier('haarcascades/haarcascade_frontalface_default.xml')
             facerect = face_cascade.detectMultiScale(grayimg, scaleFactor=1.2, minNeighbors=2, minSize=(100, 100))
             
